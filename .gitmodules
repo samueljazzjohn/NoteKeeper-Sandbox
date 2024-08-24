@@ -1,0 +1,6 @@
+[submodule "Backend/note-keeper-service"]
+	path = Backend/note-keeper-service
+	url = git@github.com:samueljazzjohn/NoteKeeperService.git
+[submodule "Frontend/note-keeper-dashboard"]
+	path = Frontend/note-keeper-dashboard
+	url = git@github.com:samueljazzjohn/NoteKeeperApp.git

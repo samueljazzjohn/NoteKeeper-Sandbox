@@ -1,0 +1,80 @@
+services:
+  reverse-proxy:
+    container_name: note-keeper-reverse-proxy
+    image: traefik:v2.4
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - docker_net
+
+  note-keeper:
+    container_name: note-keeper
+    logging:
+      options:
+        max-size: "100m"
+        max-file: "3"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.note-keeper.rule=Host(`app.localhost`)"
+      - "traefik.http.services.note-keeper.loadbalancer.server.port=3000"
+    env_file:
+      - ./Frontend/note-keeper-dashboard/.env
+    build:
+      context: ./Frontend/note-keeper-dashboard/
+      dockerfile: Dockerfile.local
+    volumes:
+      - "./Frontend/note-keeper-dashboard/src:/app/src"
+    networks:
+      - docker_net
+
+  note-keeper-service:
+    container_name: note-keeper-service
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "3"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.note-keeper-service.rule=Host(`api.localhost`)"
+      - "traefik.http.services.note-keeper-service.loadbalancer.server.port=8000"
+    build:
+      context: ./Backend/note-keeper-service/
+      dockerfile: Dockerfile.local
+    env_file:
+      - ./Backend/note-keeper-service/.env
+    volumes:
+      - "./Backend/note-keeper-service/app:/code/app"
+    networks:
+      - docker_net
+
+  mongodb:
+    image: mongo:5.0.5
+    container_name: mongodb
+    logging:
+      options:
+        max-size: "50m"
+        max-file: "3"
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+    - db-volume:/data/db
+    networks:
+      - docker_net
+
+networks:
+  docker_net:
+    name: docker_net
+    driver: bridge
+
+
+volumes:
+  db-volume:
+
