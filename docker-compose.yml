@@ -43,7 +43,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.note-keeper-service.rule=Host(`api.localhost`)"
-      - "traefik.http.services.note-keeper-service.loadbalancer.server.port=8000"
+      - "traefik.http.services.note-keeper-service.loadbalancer.server.port=4000"
     build:
       context: ./Backend/note-keeper-service/
       dockerfile: Dockerfile.local
