@@ -1,5 +1,3 @@
-[TOC]
-
 # NoteKeeper Sandbox
 
 It is the main repository that serves as a centralized development environment for all (frontend, backend and database) components, allowing us to work on them together while keeping them as separate Git repositories. 
